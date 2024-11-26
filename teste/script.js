@@ -1,18 +1,17 @@
 const formulario = document.querySelector("form");
 const botao = document.querySelector("button");
 const inome = document.querySelector(".nome");
-isobrenome = document.querySelector(".sobrenome");
-idataNascimento = document.querySelector(".dataNascimento");
-const itelefone = document.querySelector("telefone");
+const isobrenome = document.querySelector(".sobrenome");
+const icpf = document.querySelector(".cpf");
+const idataNascimento = document.querySelector(".dataNascimento");
+const itelefone = document.querySelector(".telefone");
 const iemail = document.querySelector(".email");
 const isenha = document.querySelector(".senha");
 const igenero = document.querySelector(".genero");
 const iplano = document.querySelector(".plano");
 
-inome = `${inome.value} ${isobrenome.value}`;
-
 function cadastrar (){
-    fetch ("http://localhost:8080/usuarios",
+    fetch ("http://localhost:8080/usuario/cadastrar",
         {
             headers: {
                 "Accept": "application/json",
@@ -21,6 +20,7 @@ function cadastrar (){
             method: "POST",
             body: JSON.stringify({
                 nome: inome.value,
+                cpf: icpf.value,
                 dataNascimento: idataNascimento.value,
                 telefone: itelefone.value,
                 email: iemail.value,
@@ -45,6 +45,34 @@ function limpar(){
 
 formulario.addEventListener("submit", function (event) {
     event.preventDefault();
+    fetchUsuarios();
     cadastrar();
     limpar();
 });
+
+async function fetchUsuarios() {
+    try {
+      const response = await fetch("http://localhost:8080/usuario/todos", {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
+      });
+  
+      // Verifica se o status da resposta indica sucesso
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+      }
+  
+      // Converte a resposta para JSON
+      const data = await response.json();
+  
+      // Exibe os dados no console
+      console.log("Usuários:", data);
+  
+      return data; // Retorna os dados para uso posterior
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    }
+  }
